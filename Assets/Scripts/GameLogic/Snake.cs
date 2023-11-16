@@ -7,9 +7,11 @@ namespace Snake.GameLogic
     public class Snake
     {
         private readonly List<SnakeSegment> _segments = new();
+        private readonly Grid _grid;
 
-        public Snake(int initialSize, Cell initialCell, MoveDirection initialDirection)
+        public Snake(int initialSize, Cell initialCell, MoveDirection initialDirection, Grid grid)
         {
+            _grid = grid;
             CreateSnake(initialSize, initialCell, initialDirection);
         }
 
@@ -37,7 +39,9 @@ namespace Snake.GameLogic
 
         private void CreateSegment(int row, int column)
         {
-            _segments.Add(new SnakeSegment(row, column));
+            var snakeSegment = new SnakeSegment(row, column);
+            _segments.Add(snakeSegment);
+            _grid.GetCellByCoordinates(row, column).SnakeSegment = snakeSegment;
         }
     }
 }

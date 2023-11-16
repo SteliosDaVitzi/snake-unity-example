@@ -9,6 +9,10 @@ namespace Snake.GameLogic
         private readonly int _totalRows, _totalColumns;
         private readonly List<Cell> _cells = new();
 
+        public List<Cell> Cells => _cells;
+        public int TotalRows => _totalRows;
+        public int TotalColumns => _totalColumns;
+
         public Grid(int totalRows, int totalColumns)
         {
             _totalRows = totalRows;
@@ -26,7 +30,12 @@ namespace Snake.GameLogic
 
         public Cell GetCenterCell()
         {
-            return _cells.Find(cell => cell.Row == _totalRows / 2 && cell.Column == _totalColumns/2);
+            return GetCellByCoordinates(_totalRows / 2, _totalColumns / 2);
+        }
+
+        public Cell GetCellByCoordinates(int row, int col)
+        {
+            return _cells.Find(cell => cell.Row == row && cell.Column == col);
         }
     }
 }
