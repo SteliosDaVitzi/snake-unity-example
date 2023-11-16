@@ -10,6 +10,7 @@ namespace Snake.GameLogic
         private readonly Grid _grid;
 
         public Grid Grid => _grid;
+        public Snake Snake => _snake;
 
         public Game(int totalGridRows, int totalGridColumns, int snakeInitialSize, MoveDirection initialDirection)
         {
@@ -23,6 +24,7 @@ namespace Snake.GameLogic
         Up,
         Down,
         Left,
-        Right
+        Right,
+        None
     }
 }

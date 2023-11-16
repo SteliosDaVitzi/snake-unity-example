@@ -10,14 +10,16 @@ public class GameManager : MonoBehaviour
 
     private Game _game;
 
+    private float _currentSpeed = 0.2f;
+    private float _timer = 0f;
+
+    private IInputControl _inputControl;
+
     void Start()
     {
-        NewGame();
-    }
+        _inputControl = new KeyboardInputControl();
 
-    void Update()
-    {
-        _gridView.UpdateCellsColors();
+        NewGame();
     }
 
     private void NewGame()
@@ -41,5 +43,34 @@ public class GameManager : MonoBehaviour
     private void DestroyGridView()
     {
         Destroy(_gridView.gameObject);
+    }
+
+
+    void Update()
+    {
+        ControlDirection();
+        UpdateSnakeMovement();
+    }
+
+    private void ControlDirection()
+    {
+        _game.Snake.ChangeDirection(_inputControl.GetMoveDirectionInput());
+    }
+
+    private void UpdateSnakeMovement()
+    {
+        _timer += Time.deltaTime;
+
+        if (_timer >= _currentSpeed)
+        {
+            MoveSnake();
+            _timer = 0f;
+        }
+    }
+
+    private void MoveSnake()
+    {
+        _game.Snake.Move();
+        _gridView.UpdateCellsColors();
     }
 }
