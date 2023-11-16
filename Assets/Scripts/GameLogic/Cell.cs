@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Snake.GameLogic
 {
     public class Cell
@@ -16,10 +11,19 @@ namespace Snake.GameLogic
         public SnakeSegment SnakeSegment { get { return _snakeSegment; } set { _snakeSegment = value; } }
         public bool HasSnakeSegment => _snakeSegment != null;
 
+        private IConsumable _consumable;
+        public IConsumable Consumable { get { return _consumable; } set { _consumable = value; } }
+        public bool HasConsumable => _consumable != null;
+
         public Cell(int row, int column)
         {
             _row = row;
             _column = column;
+        }
+
+        public void EatConsumable()
+        {
+            _consumable = null;
         }
     }
 }

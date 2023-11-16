@@ -8,6 +8,9 @@ namespace Snake.GameLogic
     {
         private int _currentRow, _currentColumn, _previousRow, _previousColumn;
 
+        public int CurrentRow => _currentRow;
+        public int CurrentColumn => _currentColumn;
+
         public int PreviousRow => _previousRow;
         public int PreviousColumn => _previousColumn;
 

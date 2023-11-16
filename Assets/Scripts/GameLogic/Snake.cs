@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,24 +6,51 @@ using UnityEngine;
 
 namespace Snake.GameLogic
 {
-    public class Snake
+    public class Snake : ISnakeEffects
     {
         private readonly List<SnakeSegment> _segments = new();
         private readonly Grid _grid;
 
         private MoveDirection _currentDirection;
 
-        public Snake(int initialSize, Cell initialCell, MoveDirection initialDirection, Grid grid)
+        public Action OnSpeedUp;
+        public Action OnSlowDown;
+
+        private float _currentSpeed = 0.0f;
+        public float CurrentSpeed => _currentSpeed;
+
+        private bool _hasSpeedEffect;
+        public bool HasSpeedEffect {  get { return _hasSpeedEffect; } set { _hasSpeedEffect = value; } }
+
+        public float SpeedEffectDuration => _config.speedEffectDuration;
+
+        private SnakeConfig _config;
+
+        public Action OnSelfCollision;
+
+        public Action<int> OnEatenConsumable;
+
+        private int _score;
+        public int Score => _score;
+
+        public Snake(SnakeConfig config, Grid grid)
         {
             _grid = grid;
-            CreateSnake(initialSize, initialCell, initialDirection);
+            _config = config;  
+            CreateSnake();
         }
 
-        private void CreateSnake(int initialSize, Cell initialCell, MoveDirection initialDirection)
+        private void CreateSnake()
         {
-            for (var i = 0; i < initialSize; i++)
+            var initialCell = _grid.GetCenterCell();
+
+            _currentSpeed = _config.normalSpeed;
+
+            ChangeDirection(_config.initialDirection);
+
+            for (var i = 0; i < _config.initialSize; i++)
             {
-                switch (initialDirection)
+                switch (_currentDirection)
                 {
                     case MoveDirection.Up:
                             AddSegment(initialCell.Row - i, initialCell.Column);
@@ -44,6 +72,12 @@ namespace Snake.GameLogic
         {
             var newSegment = new SnakeSegment(row, column);
             _segments.Add(newSegment);
+
+            var targetCell = _grid.GetCellByCoordinates(row, column);
+
+            if (targetCell == null)
+                return;
+
             _grid.GetCellByCoordinates(row, column).SnakeSegment = newSegment;
         }
 
@@ -76,6 +110,83 @@ namespace Snake.GameLogic
                 else
                     _segments[i].UpdatePosition(false, _currentDirection, _grid, _segments[i - 1]);
             }
+
+            var snakeHead = _segments.First();
+            var targetCell = _grid.GetCellByCoordinates(snakeHead.CurrentRow, snakeHead.CurrentColumn);
+
+            if (targetCell.HasConsumable)
+                EatConsumable(targetCell);
+
+            if (targetCell.SnakeSegment != snakeHead && targetCell.HasSnakeSegment)
+                OnSelfCollision?.Invoke();
         }
+
+        private void EatConsumable(Cell targetCell)
+        {
+            targetCell.Consumable.ExecuteConsumableEffect(this);
+
+            targetCell.EatConsumable();
+
+            ++_score;
+            OnEatenConsumable?.Invoke(_score);
+
+            _grid.SpawnConsumable();
+        }
+
+        public void SetNormalSpeed()
+        {
+            _currentSpeed = _config.normalSpeed;
+        }
+
+        public void IncreaseSize()
+        {
+            var lastSegment = _segments.Last();
+            _segments.Add(new SnakeSegment(lastSegment.PreviousRow, lastSegment.PreviousColumn));
+        }
+
+        public void DecreaseSize()
+        {
+            if (_segments.Count <= 1)
+                return;
+
+            var lastSegment = _segments.Last();
+            lastSegment.RemoveSegment(_grid);
+            _segments.Remove(_segments.Last());
+        }
+
+        public void IncreaseSpeed()
+        {
+            _hasSpeedEffect = true;
+            _currentSpeed = _config.fastSpeed;
+        }
+
+        public void DecreaseSpeed()
+        {
+            _hasSpeedEffect = true;
+            _currentSpeed = _config.slowSpeed;
+        }
+
+        public void Revert()
+        {
+            _segments.Reverse();
+            if (_currentDirection == MoveDirection.Up)
+                _currentDirection = MoveDirection.Down;
+            else if (_currentDirection == MoveDirection.Down)
+                _currentDirection = MoveDirection.Up;
+            else if (_currentDirection == MoveDirection.Left)
+                _currentDirection = MoveDirection.Right;
+            else if (_currentDirection == MoveDirection.Right)
+                _currentDirection = MoveDirection.Left;
+        }
+    }
+
+    public struct SnakeConfig
+    {
+        public int initialSize;
+        public MoveDirection initialDirection;
+        public float normalSpeed;
+        public float slowSpeed;
+        public float fastSpeed;
+        public float speedEffectDuration;
     }
 }

@@ -8,15 +8,18 @@ namespace Snake.GameLogic
     {
         private readonly int _totalRows, _totalColumns;
         private readonly List<Cell> _cells = new();
+        private readonly IConsumablesGenerator _consumablesGenerator;
 
         public List<Cell> Cells => _cells;
         public int TotalRows => _totalRows;
         public int TotalColumns => _totalColumns;
 
-        public Grid(int totalRows, int totalColumns)
+        public Grid(int totalRows, int totalColumns, IConsumablesGenerator consumablesGenerator)
         {
             _totalRows = totalRows;
             _totalColumns = totalColumns;
+
+            _consumablesGenerator = consumablesGenerator;
 
             GenerateGrid();
         }
@@ -26,6 +29,8 @@ namespace Snake.GameLogic
             for(var i =0;i < _totalRows;i++)
                 for(var j =0;j < _totalColumns; j++)
                     _cells.Add(new Cell(i,j));
+
+            SpawnConsumable();
         }
 
         public Cell GetCenterCell()
@@ -36,6 +41,14 @@ namespace Snake.GameLogic
         public Cell GetCellByCoordinates(int row, int col)
         {
             return _cells.Find(cell => cell.Row == row && cell.Column == col);
+        }
+
+        public void SpawnConsumable()
+        {
+            var availableCells = _cells.FindAll(cell => cell.HasConsumable == false && cell.HasSnakeSegment == false);
+            var randomInt = Random.Range(0, availableCells.Count - 1);
+
+            availableCells[randomInt].Consumable = _consumablesGenerator.GetConsumable();
         }
     }
 }

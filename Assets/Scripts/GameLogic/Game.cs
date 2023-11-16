@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Snake.GameLogic
 {
     public class Game
@@ -12,19 +8,30 @@ namespace Snake.GameLogic
         public Grid Grid => _grid;
         public Snake Snake => _snake;
 
-        public Game(int totalGridRows, int totalGridColumns, int snakeInitialSize, MoveDirection initialDirection)
+        private GameState _currentState;
+        public GameState CurrentState => _currentState;
+
+        public Game(int totalGridRows, int totalGridColumns, SnakeConfig snakeConfig, IConsumablesGenerator consumablesGenerator)
         {
-            _grid = new Grid(totalGridRows, totalGridColumns);
-            _snake = new Snake(snakeInitialSize, _grid.GetCenterCell(), initialDirection, _grid);
+            _grid = new Grid(totalGridRows, totalGridColumns, consumablesGenerator);
+            _snake = new Snake(snakeConfig, _grid);
+
+            _currentState = GameState.InProgress;
         }
     }
 
     public enum MoveDirection
     {
+        None,
         Up,
         Down,
         Left,
         Right,
-        None
+    }
+
+    public enum GameState
+    {
+        NotStarted,
+        InProgress
     }
 }

@@ -1,7 +1,4 @@
 using Snake.GameLogic;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CellView : MonoBehaviour
@@ -9,7 +6,6 @@ public class CellView : MonoBehaviour
     [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private Color _defaultColor;
     [SerializeField] private Color _snakeSegmentColor;
-
 
     private Cell _cell;
 
@@ -21,8 +17,10 @@ public class CellView : MonoBehaviour
 
     public void UpdateColor()
     {
-        if(_cell.HasSnakeSegment)
+        if (_cell.HasSnakeSegment)
             SetSnakeSegmentColor();
+        else if (_cell.HasConsumable)
+            SetConsumableColor();
         else
             SetDefaultColor();
     }
@@ -35,6 +33,11 @@ public class CellView : MonoBehaviour
     public void SetSnakeSegmentColor()
     {
         SetColorToSpriteRenderer(_snakeSegmentColor);
+    }
+
+    public void SetConsumableColor()
+    {
+        SetColorToSpriteRenderer(_cell.Consumable.Color);
     }
 
     private void SetColorToSpriteRenderer(Color color)
