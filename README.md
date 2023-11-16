@@ -1,6 +1,6 @@
 # Snake-Unity
 
-This is an example of the classic snake game, mad in Unity3D
+This is an example of the classic snake game, made in Unity3D
 
 Unity version : 2022.3.7f1
 
