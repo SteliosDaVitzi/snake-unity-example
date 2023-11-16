@@ -9,10 +9,18 @@ namespace Snake.GameLogic
         private readonly Snake _snake;
         private readonly Grid _grid;
 
-        public Game(int totalRows, int totalColumns, int snakeInitialSize)
+        public Game(int totalGridRows, int totalGridColumns, int snakeInitialSize, MoveDirection initialDirection)
         {
-            _grid = new Grid(totalRows, totalColumns);
-            _snake = new Snake(snakeInitialSize);
+            _grid = new Grid(totalGridRows, totalGridColumns);
+            _snake = new Snake(snakeInitialSize, _grid.GetCenterCell(), initialDirection);
         }
+    }
+
+    public enum MoveDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
     }
 }

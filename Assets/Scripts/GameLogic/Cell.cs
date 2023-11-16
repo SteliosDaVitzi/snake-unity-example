@@ -8,6 +8,9 @@ namespace Snake.GameLogic
     {
         private readonly int _row, _column;
 
+        public int Row => _row;
+        public int Column => _column;
+
         public Cell(int row, int column)
         {
             _row = row;

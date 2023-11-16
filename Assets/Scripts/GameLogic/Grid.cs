@@ -23,5 +23,10 @@ namespace Snake.GameLogic
                 for(var j =0;j < _totalColumns; j++)
                     _cells.Add(new Cell(i,j));
         }
+
+        public Cell GetCenterCell()
+        {
+            return _cells.Find(cell => cell.Row == _totalRows / 2 && cell.Column == _totalColumns/2);
+        }
     }
 }

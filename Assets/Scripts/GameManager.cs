@@ -19,6 +19,6 @@ public class GameManager : MonoBehaviour
 
     public void NewGame()
     {
-        _game = new Game(21, 21, 3);
+        _game = new Game(21, 21, 3, MoveDirection.Up);
     }
 }

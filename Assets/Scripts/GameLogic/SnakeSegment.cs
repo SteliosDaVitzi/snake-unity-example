@@ -6,9 +6,12 @@ namespace Snake.GameLogic
 {
     public class SnakeSegment
     {
-        public SnakeSegment()
-        {
+        private int _currentRow, _currentColumn;
 
+        public SnakeSegment(int row, int column)
+        {
+            _currentRow = row;
+            _currentColumn = column;
         }
     }
 }
